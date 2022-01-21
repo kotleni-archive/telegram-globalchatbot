@@ -12,8 +12,8 @@ class DeactivateCommand: Command() {
         return "Деактивировать пользователя в чате."
     }
 
-    override fun isNeedOwn(): Boolean {
-        return true
+    override fun getPermission(): Permission {
+        return Permission.OWNER
     }
 
     override fun invokeCommand(msg: Message, line: String?, bot: TelegramBot) {

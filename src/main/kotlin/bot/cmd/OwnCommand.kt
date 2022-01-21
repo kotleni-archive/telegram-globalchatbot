@@ -13,8 +13,8 @@ class OwnCommand: Command() {
         return "Добавляет пользователя в список администраторов."
     }
 
-    override fun isNeedOwn(): Boolean {
-        return true
+    override fun getPermission(): Permission {
+        return Permission.GOD
     }
 
     override fun invokeCommand(msg: Message, line: String?, bot: TelegramBot) {

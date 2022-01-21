@@ -12,8 +12,8 @@ class DumpCommand: Command() {
         return "Отправляет все данные бота, файлом."
     }
 
-    override fun isNeedOwn(): Boolean {
-        return true
+    override fun getPermission(): Permission {
+        return Permission.GOD
     }
 
     override fun invokeCommand(msg: Message, line: String?, bot: TelegramBot) {

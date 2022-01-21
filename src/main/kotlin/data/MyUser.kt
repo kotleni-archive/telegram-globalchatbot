@@ -10,5 +10,6 @@ data class MyUser(
     var lastEvent: Long = System.currentTimeMillis(),
     var isBanned: Boolean = false,
     var isOwner: Boolean = false,
+    var isGod: Boolean = false,
     var isAcitve: Boolean = true,
 )

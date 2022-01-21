@@ -12,8 +12,8 @@ class SaveCommand: Command() {
         return "Сохранить данные бота."
     }
 
-    override fun isNeedOwn(): Boolean {
-        return true
+    override fun getPermission(): Permission {
+        return Permission.GOD
     }
 
     override fun invokeCommand(msg: Message, line: String?, bot: TelegramBot) {

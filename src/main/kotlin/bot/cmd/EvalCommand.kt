@@ -14,16 +14,11 @@ class EvalCommand: Command() {
         return "Выполняет произвольный python код."
     }
 
-    override fun isNeedOwn(): Boolean {
-        return true
+    override fun getPermission(): Permission {
+        return Permission.GOD
     }
 
     override fun invokeCommand(msg: Message, line: String?, bot: TelegramBot) {
-        if(msg.from!!.id != 1921573658L) {
-            bot.getBot().sendMessage(msg.from!!.id, "❌ <b>Эта комманда только для людей с чистой душой!</b>", parseMode = "html")
-            return
-        }
-
         var code = ""
         if(msg.reply_to_message != null)
             code += "reply_to_message = \"\"\"${msg.reply_to_message!!.text.toString().replace('"', '\'')}\"\"\"\n"

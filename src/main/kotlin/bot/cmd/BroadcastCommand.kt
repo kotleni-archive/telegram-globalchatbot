@@ -13,8 +13,8 @@ class BroadcastCommand: Command() {
         return "Выводит оповщение от имени бота в чат."
     }
 
-    override fun isNeedOwn(): Boolean {
-        return true
+    override fun getPermission(): Permission {
+        return Permission.OWNER
     }
 
     override fun invokeCommand(msg: Message, line: String?, bot: TelegramBot) {

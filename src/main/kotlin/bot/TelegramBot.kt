@@ -75,10 +75,14 @@ open class TelegramBot(val token: String, val username: String): BotListener {
                 val user = getStorage().getUser(msg.from!!.id)
                 logd("(${msg.from!!.id}, ${msg.from!!.username}) ${user.username} -> ${cmd.getName()} $str")
 
-                if(cmd.isNeedOwn() && user.isOwner) {
-                    cmd.invokeCommand(msg, str, this)
-                } else if(!cmd.isNeedOwn()) {
-                    cmd.invokeCommand(msg, str, this)
+                if(!user.isBanned) {
+                    if (cmd.isUserCan(user))
+                        cmd.invokeCommand(msg, str, this)
+                    else
+                        bot.sendMessage(
+                            msg.from!!.id,
+                            "❌ У вас нет прав на выполнение этой комманды! (${cmd.getPermission().name})"
+                        )
                 }
             }
         }
@@ -86,28 +90,28 @@ open class TelegramBot(val token: String, val username: String): BotListener {
 
     fun broadcastVoice(fileId: String, text: String, ignoreId: Long = -1) {
         getStorage().getUsers().forEach {
-            if(it.id != ignoreId && it.isAcitve)
+            if(it.id != ignoreId && it.isAcitve && !it.isBanned)
                 getBot().sendVoice(it.id, fileId, caption = text, parseMode = "html")
         }
     }
 
     fun broadcastPhoto(fileId: String, text: String, ignoreId: Long = -1) {
         getStorage().getUsers().forEach {
-            if(it.id != ignoreId && it.isAcitve)
+            if(it.id != ignoreId && it.isAcitve && !it.isBanned)
                 getBot().sendPhoto(it.id, fileId, caption = text, parseMode = "html")
         }
     }
 
     fun broadcastDocument(fileId: String, text: String, ignoreId: Long = -1) {
         getStorage().getUsers().forEach {
-            if(it.id != ignoreId && it.isAcitve)
+            if(it.id != ignoreId && it.isAcitve && !it.isBanned)
                 getBot().sendDocument(it.id, fileId, caption = text, parseMode = "html")
         }
     }
 
     fun broadcastSticker(fileId: String, text: String, ignoreId: Long = -1) {
         getStorage().getUsers().forEach {
-            if(it.id != ignoreId && it.isAcitve) {
+            if(it.id != ignoreId && it.isAcitve && !it.isBanned) {
                 getBot().sendMessage(it.id, text, parseMode = "html").whenCompleteAsync { message, throwable ->
                     getBot().sendSticker(it.id, fileId)
                 }
@@ -117,21 +121,21 @@ open class TelegramBot(val token: String, val username: String): BotListener {
 
     fun broadcastAudio(fileId: String, text: String, ignoreId: Long = -1) {
         getStorage().getUsers().forEach {
-            if(it.id != ignoreId && it.isAcitve)
+            if(it.id != ignoreId && it.isAcitve && !it.isBanned)
                 getBot().sendAudio(it.id, fileId, caption = text, parseMode = "html")
         }
     }
 
     fun broadcastVideo(fileId: String, text: String, ignoreId: Long = -1) {
         getStorage().getUsers().forEach {
-            if(it.id != ignoreId && it.isAcitve)
+            if(it.id != ignoreId && it.isAcitve && !it.isBanned)
                 getBot().sendVideo(it.id, fileId, caption = text, parseMode = "html")
         }
     }
 
     fun broadcastVideoNote(fileId: String, text: String, ignoreId: Long = -1) {
         getStorage().getUsers().forEach {
-            if(it.id != ignoreId && it.isAcitve) {
+            if(it.id != ignoreId && it.isAcitve && !it.isBanned) {
                 getBot().sendMessage(it.id, text, parseMode = "html").whenCompleteAsync { message, throwable ->
                     getBot().sendVideoNote(it.id, fileId)
                 }
@@ -144,7 +148,7 @@ open class TelegramBot(val token: String, val username: String): BotListener {
         msgs.add(initMessageForId)
 
         getStorage().getUsers().forEach {
-            if(it.id != ignoreId && it.isAcitve)
+            if(it.id != ignoreId && it.isAcitve && !it.isBanned)
                 getBot().sendMessage(it.id, text, parseMode = "html").whenCompleteAsync { msg, _ ->
                     msgs.add(MessageForId(it.id, msg))
                 }
@@ -157,7 +161,7 @@ open class TelegramBot(val token: String, val username: String): BotListener {
         val msgs = ArrayList<MessageForId>()
         getCache()[cacheId].msgs.forEach {
             val user = getStorage().getUser(it.forId)
-            if(user.id != ignoreId && user.isAcitve) {
+            if(user.id != ignoreId && user.isAcitve && !user.isBanned) {
                 getBot().sendMessage(user.id, text, parseMode = "html", replyTo = it.message.message_id).whenCompleteAsync { msg, _ ->
                     msgs.add(MessageForId(user.id, msg))
                 }
@@ -169,7 +173,7 @@ open class TelegramBot(val token: String, val username: String): BotListener {
 
     fun broadcastAdminMessage(text: String, ignoreId: Long = -1, ) {
         getStorage().getUsers().forEach {
-            if(it.id != ignoreId && it.isAcitve && it.isOwner)
+            if(it.id != ignoreId && it.isAcitve && it.isOwner && !it.isBanned)
                 getBot().sendMessage(it.id, text, parseMode = "html")
         }
     }

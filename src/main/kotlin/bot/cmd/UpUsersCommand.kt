@@ -3,13 +3,13 @@ package bot.cmd
 import bot.TelegramBot
 import com.elbekD.bot.types.Message
 
-class LogsCommand: Command() {
+class UpUsersCommand: Command() {
     override fun getName(): String {
-        return "/logs"
+        return "/up_users"
     }
 
     override fun getDescription(): String {
-        return "Отправляет логи на текущий день файлом."
+        return ""
     }
 
     override fun getPermission(): Permission {
@@ -17,6 +17,11 @@ class LogsCommand: Command() {
     }
 
     override fun invokeCommand(msg: Message, line: String?, bot: TelegramBot) {
-        bot.getBot().sendDocument(msg.from!!.id, Logger.getFile(), caption = "Logs file")
+        bot.getStorage().getUsers().forEach {
+            it.lastEvent = System.currentTimeMillis()
+            it.isAcitve = true
+        }
+
+        bot.getBot().sendMessage(msg.from!!.id, "❌ Все пользователи были активированы!")
     }
 }

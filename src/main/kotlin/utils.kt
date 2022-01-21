@@ -1,3 +1,4 @@
+import java.nio.charset.Charset
 import kotlin.concurrent.thread
 
 fun logd(text: String) {
@@ -14,3 +15,7 @@ fun startInterval(delay: Int, l: () -> Unit) = thread {
 fun getRandomSeed(): Int {
     return Math.round(Math.random() * 9990).toInt()
 }
+
+//fun showMacosNotification(title: String, message: String) {
+//    val proc = Runtime.getRuntime().exec("alerter -message \"$message\" -title \"$title\"")
+//}

@@ -17,11 +17,8 @@ class HelpCommand: Command() {
         var text = "<b>Список комманд:</b>\n\n"
 
         bot.getCommands().forEach {
-            if(it.isNeedOwn() && user.isOwner) {
+            if(it.isUserCan(user))
                 text += "${it.getName()} - ${it.getDescription()}\n"
-            } else if(!it.isNeedOwn()) {
-                text += "${it.getName()} - ${it.getDescription()}\n"
-            }
         }
 
         bot.getBot().sendMessage(msg.from!!.id, text, parseMode = "html")
