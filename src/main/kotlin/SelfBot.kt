@@ -40,6 +40,7 @@ class SelfBot(): TelegramBot(Config.getBotToken(), Config.getBotUsername()) {
     override fun onMessage(msg: Message) {
         super.onMessage(msg)
 
+        // if need register new user
         if(!getStorage().isUserExist(msg.from!!.id)) {
             val username = if(msg.from!!.username == null) NicknameHelper.getRandom() else msg.from!!.username!!
 
