@@ -1,30 +1,33 @@
+import bot.Config
 import bot.TelegramBot
 import bot.cmd.*
 import com.elbekD.bot.types.Message
 import data.CachedMessage
 import data.MessageForId
 import data.MyUser
-import helper.FilterHelper
 import helper.NicknameHelper
 
 
-class SelfBot(): TelegramBot("5006938722:AAE7Kj75aXVg-GrbW5r0U_4KTFTSF-iyGk4", "globalchat2022_bot") {
+class SelfBot(): TelegramBot(Config.getBotToken(), Config.getBotUsername()) {
     override fun start() {
         super.start()
 
+        // thread exceptions handler
         Thread.setDefaultUncaughtExceptionHandler { paramThread, paramThrowable ->
             logd(paramThrowable.stackTraceToString())
             broadcastAdminMessage("<code>${paramThrowable.stackTraceToString()}</code>")
         }
 
+        // saving timer
         startInterval(DEFAULT_INTERVAL_DELAY) {
             updateUsersActive()
             getStorage().save()
         }
 
+        // setup commands
         setupCommands(
             JojoCommand(), StartCommand(), LogsCommand(),
-            SourcesCommand(), DumpCommand(), HelpCommand(),
+            GithubCommand(), DumpCommand(), HelpCommand(),
             MeCommand(), SaveCommand(), NickCommand(),
             DebugCommand(), BroadcastCommand(), ListCommand(),
             DeactivateCommand(), RateCommand(), OwnCommand(),
