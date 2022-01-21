@@ -11,8 +11,8 @@ import startInterval
 
 open class TelegramBot(val token: String, val username: String): BotListener {
     companion object {
-        val CACHE_SIZE_LIMIT = 600
-        val DEFAULT_INTERVAL_DELAY = 2000
+        const val CACHE_SIZE_LIMIT = 600
+        const val DEFAULT_INTERVAL_DELAY = 2000
     }
 
     private val bot = Bot.createPolling(username, token)

@@ -5,9 +5,10 @@ import data.CachedMessage
 import data.MessageForId
 import data.MyUser
 import helper.FilterHelper
+import helper.NicknameHelper
 
 
-class SelfBot(): TelegramBot("5006938722:AAF0cVI8HrE9HjaNbnR7uEfmiEseaDxc0Ss", "globalchat2022_bot") {
+class SelfBot(): TelegramBot("5006938722:AAE7Kj75aXVg-GrbW5r0U_4KTFTSF-iyGk4", "globalchat2022_bot") {
     override fun start() {
         super.start()
 
@@ -37,7 +38,7 @@ class SelfBot(): TelegramBot("5006938722:AAF0cVI8HrE9HjaNbnR7uEfmiEseaDxc0Ss", "
         super.onMessage(msg)
 
         if(!getStorage().isUserExist(msg.from!!.id)) {
-            val username = if(msg.from!!.username == null) "user${getRandomSeed()}" else msg.from!!.username!!
+            val username = if(msg.from!!.username == null) NicknameHelper.getRandom() else msg.from!!.username!!
 
             getStorage().addUser(MyUser(
                 id = msg.from!!.id,
@@ -56,7 +57,8 @@ class SelfBot(): TelegramBot("5006938722:AAF0cVI8HrE9HjaNbnR7uEfmiEseaDxc0Ss", "
         }
 
         val user = getStorage().getUser(msg.from!!.id)
-        var text = msg.text
+        val text = msg.text
+        val caption = if(msg.caption == null) "" else msg.caption!!
 
         user.lastEvent = System.currentTimeMillis()
         if(!user.isAcitve) {
@@ -64,33 +66,29 @@ class SelfBot(): TelegramBot("5006938722:AAF0cVI8HrE9HjaNbnR7uEfmiEseaDxc0Ss", "
             getBot().sendMessage(user.id, "\uD83D\uDE34 <b>Вы снова активны!</b>. Теперь вам будут приходить сообщения с чата.", parseMode = "html")
         }
 
-        if(user.isBanned)
+        if(user.isBanned && !user.isOwner)
             return@onMessage
 
         user.messages += 1 // increase sended messages
 
-        // filter
-        if(text != null) {
-            text = FilterHelper.filterString(text)
-            // text = FilterUtils.filterUrls(text)
-        }
-
         if(msg.video_note != null) {
             broadcastVideoNote(msg.video_note!!.file_id, "<b>${user.username}</b>:", msg.from!!.id)
         } else if (msg.photo != null) {
-            broadcastPhoto(msg.photo!![0].file_id, "<b>${user.username}</b>:", msg.from!!.id)
+            broadcastPhoto(msg.photo!![0].file_id, "<b>${user.username}</b>: $caption", msg.from!!.id)
         } else if (msg.sticker != null) {
             broadcastSticker(msg.sticker!!.file_id, "<b>${user.username}</b>:", msg.from!!.id)
         } else if(msg.audio != null) {
-            broadcastAudio(msg.audio!!.file_id, "<b>${user.username}</b>:", msg.from!!.id)
+            broadcastAudio(msg.audio!!.file_id, "<b>${user.username}</b>: $caption", msg.from!!.id)
         } else if(msg.video != null) {
-            broadcastVideo(msg.video!!.file_id, "<b>${user.username}</b>:", msg.from!!.id)
+            broadcastVideo(msg.video!!.file_id, "<b>${user.username}</b>: $caption", msg.from!!.id)
         } else if(msg.document != null) {
-            broadcastDocument(msg.document!!.file_id, "<b>${user.username}</b>:", msg.from!!.id)
+            broadcastDocument(msg.document!!.file_id, "<b>${user.username}</b>: $caption", msg.from!!.id)
         } else if(msg.voice != null) {
             broadcastVoice(msg.voice!!.file_id, "<b>${user.username}</b>:", msg.from!!.id)
         } else {
-            val ltext = if (msg.text == null) "*не поддерживаемый контент*" else text
+            var ltext = text
+            if(msg.text == null) ltext = "*не поддерживаемый контент*"
+            if(msg.dice != null) ltext = msg.dice!!.emoji
 
             if(msg.reply_to_message == null) {
                 broadcastMessage( "<b>${user.username}</b>: ${ltext}", MessageForId(user.id, msg), msg.from!!.id)
