@@ -2,7 +2,6 @@ package bot.cmd
 
 import bot.TelegramBot
 import com.elbekD.bot.types.Message
-import java.io.File
 
 class GithubCommand: Command() {
     override fun getName(): String {
