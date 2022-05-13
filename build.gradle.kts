@@ -1,5 +1,6 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+import org.jetbrains.kotlin.ir.backend.js.compile
 
 plugins {
     kotlin("jvm") version "1.5.10"
@@ -16,7 +17,7 @@ repositories {
 }
 
 dependencies {
-    implementation("com.github.elbekD:kt-telegram-bot:+")
+    implementation("com.github.elbekD:kt-telegram-bot:1.4.1")
     implementation("com.google.code.gson:gson:2.8.9")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0")
 }
